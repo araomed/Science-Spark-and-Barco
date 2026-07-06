@@ -2,7 +2,9 @@
 
 ## Laboratory Equipment Management System
 
-A web-based Laboratory Equipment Management System developed as part of an internship project at **Barco Al-Iraq**.
+A web-based Laboratory Equipment Management System built with FastAPI and PostgreSQL, developed as part of an internship project at Barco Al-Iraq.
+
+The system centralizes how laboratory equipment, customers, and lab locations are tracked, laying the foundation for maintenance scheduling, service reporting, and role-based user management as the project grows.
 
 ---
 
@@ -13,81 +15,118 @@ A web-based Laboratory Equipment Management System developed as part of an inter
 
 ---
 
-## Project Objective
+## Tech Stack
 
-The system is designed to manage laboratory equipment throughout its lifecycle by providing:
-
-- Equipment inventory management
-- Customer and laboratory management
-- Preventive maintenance scheduling
-- Corrective maintenance tracking
-- Service report generation and archiving
-- User management with role-based access control
-- Reporting and analytics
-
-The project is being developed with future support for:
-
-- Internal Knowledge Base
-- QR Code Documentation System
-
----
-
-## Technology Stack
-
-### Backend
-
-- Python
-- FastAPI
-- SQLAlchemy
-
-### Database
-
-- PostgreSQL
-
-### Frontend (Planned)
-
-- React
-- Bootstrap 5
-- HTML5
-- CSS3
-
-### Version Control
-
-- Git
-- GitHub
+| Layer          | Technology                     |
+|----------------|---------------------------------|
+| Backend        | Python, FastAPI                |
+| ORM / Database | SQLAlchemy, PostgreSQL         |
+| Validation     | Pydantic                       |
+| Server         | Uvicorn                        |
+| Frontend       | React, Bootstrap 5 (planned)   |
+| Version Control| Git, GitHub                    |
 
 ---
 
 ## Project Structure
 
-```text
 app/
+- auth/            JWT & OAuth2 handling (scaffolded, not yet implemented)
+- core/            App config & security helpers (scaffolded)
+- crud/            Database operations per entity
+- models/          SQLAlchemy ORM models
+- routers/         API route definitions
+- schemas/         Pydantic request/response schemas
+- services/        Email, PDF, and notification services (scaffolded)
+- utils/           Shared constants & helpers (scaffolded)
+- database.py      DB engine, session, and Base setup
+- main.py          FastAPI app entrypoint
+
 documentation/
-tests/
-uploads/
-```
+- API.md
+- Architecture.md
+- Database.md
+- Deployment.md
+- SRS.md
+- Security.md
+- Timeline.md
+- diagrams/         Architecture, ERD, Roles, and Workflow diagrams
 
 ---
 
 ## Current Status
 
-- ✅ Project initialized
-- ✅ FastAPI configured
-- ✅ PostgreSQL connected
-- ✅ GitHub repository created
-- 🚧 Equipment Management module in development
+### Implemented
+- Equipment: full CRUD (/equipment)
+- Customers: full CRUD (/customers)
+- Laboratories: full CRUD, linked to a customer via customer_id (/laboratories)
+- PostgreSQL connection via SQLAlchemy, with environment-based config (.env)
+
+### Scaffolded (folders/files exist, logic not yet written)
+- User accounts & role-based access control
+- JWT authentication (app/auth)
+- Maintenance scheduling & service reports
+- Notifications & email service
+- PDF report generation
+
+### Planned
+- React + Bootstrap frontend
+- Internal Knowledge Base
+- QR Code-based equipment documentation
 
 ---
 
-## Future Modules
+## API Overview
 
-- Equipment Management
-- Customer Management
-- User Management
-- Role & Permission Management
-- Maintenance Scheduling
-- Service Requests
-- Service Reports
-- Dashboard & Analytics
-- Notifications
-- Reporting & Export
+| Resource     | Endpoints |
+|--------------|-----------|
+| Equipment    | GET /equipment, GET /equipment/{id}, POST /equipment, PUT /equipment/{id}, DELETE /equipment/{id} |
+| Customers    | GET /customers, GET /customers/{id}, POST /customers, PUT /customers/{id}, DELETE /customers/{id} |
+| Laboratories | GET /laboratories, GET /laboratories/{id}, POST /laboratories, PUT /laboratories/{id}, DELETE /laboratories/{id} |
+
+Each laboratory must reference an existing customer_id; the API returns a 404 if the customer doesn't exist.
+
+Full interactive docs are available at /docs (Swagger UI) once the server is running.
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Python 3.11+
+- PostgreSQL installed and running
+
+### 1. Clone the repo
+git clone https://github.com/araomed/Science-Spark-and-Barco.git
+cd Science-Spark-and-Barco
+
+### 2. Set up a virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+### 3. Install dependencies
+pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv
+
+### 4. Configure environment variables
+
+Create a .env file in the project root:
+DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database_name>
+
+### 5. Run the server
+uvicorn app.main:app --reload
+
+The API will be available at http://127.0.0.1:8000, with interactive docs at http://127.0.0.1:8000/docs.
+
+---
+
+## Documentation
+
+Detailed design and planning docs live in /documentation:
+- SRS.md: Software Requirements Specification
+- Architecture.md: System architecture overview
+- Database.md: Database design
+- API.md: API reference
+- Security.md: Security considerations
+- Deployment.md: Deployment notes
+- Timeline.md: Project timeline
+- diagrams/: ERD, architecture, roles, and workflow diagrams (.drawio)
