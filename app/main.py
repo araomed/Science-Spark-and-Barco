@@ -1,27 +1,15 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 
-from app.database import engine, Base, get_db
-from app import models, schemas, crud
+from app.database import Base, engine
+from app.routers import equipment
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Lab Management API")
 
+app.include_router(equipment.router)
+
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Lab Management API is running!"}
-
-
-@app.post("/equipment", response_model=schemas.EquipmentResponse)
-def create_equipment(
-    equipment: schemas.EquipmentCreate,
-    db: Session = Depends(get_db)
-):
-    return crud.create_equipment(db, equipment)
-
-
-@app.get("/equipment", response_model=list[schemas.EquipmentResponse])
-def get_equipment(db: Session = Depends(get_db)):
-    return crud.get_all_equipment(db)

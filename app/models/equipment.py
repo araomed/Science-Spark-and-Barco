@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from app.database import Base
 
+
 class Equipment(Base):
     __tablename__ = "equipment"
 
