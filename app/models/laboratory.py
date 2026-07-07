@@ -19,4 +19,12 @@ class Laboratory(Base):
 
     room_number = Column(String)
 
-    customer = relationship("Customer", back_populates="laboratories")
+    customer = relationship(
+        "Customer",
+        back_populates="laboratories"
+    )
+
+    equipment = relationship(
+        "Equipment",
+        back_populates="laboratory"
+    )

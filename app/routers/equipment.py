@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -11,6 +11,8 @@ from app.schemas.equipment import (
 
 from app.crud.crud_equipment import (
     create_equipment,
+    get_equipment_by_asset_tag,
+    get_equipment_by_serial_number,
     get_all_equipment,
     get_equipment,
     update_equipment,
@@ -24,8 +26,11 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[EquipmentResponse])
-def read_equipment(db: Session = Depends(get_db)):
-    return get_all_equipment(db)
+def read_equipment(
+    laboratory_id: int | None = None,
+    db: Session = Depends(get_db),
+):
+    return get_all_equipment(db, laboratory_id=laboratory_id)
 
 
 @router.get("/{equipment_id}", response_model=EquipmentResponse)
@@ -41,11 +46,29 @@ def read_equipment_by_id(
     return equipment
 
 
-@router.post("/", response_model=EquipmentResponse)
+@router.post(
+    "/",
+    response_model=EquipmentResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def add_equipment(
     equipment: EquipmentCreate,
     db: Session = Depends(get_db),
 ):
+    errors = []
+
+    if get_equipment_by_serial_number(db, equipment.serial_number):
+        errors.append("serial_number already exists")
+
+    if get_equipment_by_asset_tag(db, equipment.asset_tag):
+        errors.append("asset_tag already exists")
+
+    if errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=", ".join(errors),
+        )
+
     return create_equipment(db, equipment)
 
 
