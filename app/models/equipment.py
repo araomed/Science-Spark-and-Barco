@@ -37,3 +37,8 @@ class Equipment(Base):
         "Laboratory",
         back_populates="equipment"
     )
+
+    maintenance_records = relationship(
+        "Maintenance",
+        back_populates="equipment"
+    )
